@@ -1,6 +1,6 @@
 from openai import OpenAI
 
-client = OpenAI(api_key="你的API_KEY")
+client = OpenAI(api_key="OPENAI_API_KEY")
 
 def summarize(title):
     try:
