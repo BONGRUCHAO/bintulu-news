@@ -2,36 +2,25 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Bintulu News</title>
+    <title>Bintulu News System</title>
     <style>
-        body {
-            font-family: Arial;
-            background: #111;
-            color: #eee;
-            padding: 20px;
-        }
-        .card {
-            background: #222;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-        }
-        a {
-            color: #4fc3f7;
-            text-decoration: none;
-        }
+        body { font-family: Arial; background:#111; color:#eee; padding:20px; }
+        .card { background:#222; padding:10px; margin:10px 0; border-radius:8px; }
+        a { color:#4fc3f7; }
+        .time { font-size:12px; color:#aaa; }
     </style>
 </head>
 <body>
-    <h2>Bintulu News</h2>
 
-    {% for item in news %}
-        <div class="card">
-            <a href="{{ item.link }}" target="_blank">
-                {{ item.title }}
-            </a>
-        </div>
-    {% endfor %}
+<h2>Bintulu News + AI Summary</h2>
+
+{% for item in news %}
+<div class="card">
+    <a href="{{item[1]}}" target="_blank">{{item[0]}}</a>
+    <p>{{item[2]}}</p>
+    <div class="time">{{item[3]}}</div>
+</div>
+{% endfor %}
 
 </body>
 </html>
