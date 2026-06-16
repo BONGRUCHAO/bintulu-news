@@ -4,8 +4,10 @@
 
 <h1>NEWS TEST</h1>
 
+<p>Count: {{ news|length }}</p>
+
 {% for item in news %}
-<p>{{ item[0] }}</p>
+<p>{{ item }}</p>
 {% endfor %}
 
 </body>
