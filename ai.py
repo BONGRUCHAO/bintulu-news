@@ -1,13 +1,3 @@
-from openai import OpenAI
-
-client = OpenAI(api_key="YOUR_KEY")
-
 def summarize(title):
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "Summarize news in 1 sentence."},
-            {"role": "user", "content": title}
-        ]
-    )
-    return response.choices[0].message.content
+    # 先用最简单版本（规则摘要）
+    return "Summary: " + title[:80]
