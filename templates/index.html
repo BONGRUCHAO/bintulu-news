@@ -1,7 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>NEWS TEST</h1>
+
 {% for item in news %}
-<div>
-    <a href="{{ item[1] }}">{{ item[0] }}</a>
-    <p>{{ item[2] }}</p>
-    <small>{{ item[3] }}</small>
-</div>
+<p>{{ item[0] }}</p>
 {% endfor %}
+
+</body>
+</html>
