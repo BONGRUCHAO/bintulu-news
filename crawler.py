@@ -3,7 +3,11 @@ from bs4 import BeautifulSoup
 
 def crawl_news():
     url = "https://news.google.com/search?q=Bintulu&hl=en-MY&gl=MY&ceid=MY:en"
+
     r = requests.get(url)
+    print("STATUS:", r.status_code)
+    print("HTML length:", len(r.text))
+
     soup = BeautifulSoup(r.text, "html.parser")
 
     results = []
@@ -12,12 +16,9 @@ def crawl_news():
         title = a.text.strip()
         href = a.get("href")
 
-        if title and href and "/articles/" in href:
-            link = "https://news.google.com" + href[1:]
+        if title:
+            results.append(title)
 
-            results.append({
-                "title": title,
-                "link": link
-            })
+    print("FOUND TITLES:", len(results))
 
-    return results[:10]
+    return []
