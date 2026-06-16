@@ -1,29 +1,24 @@
 from flask import Flask, render_template
-import requests
-from bs4 import BeautifulSoup
+from db import init_db, insert_news, get_news
+from crawler import crawl_news
+from ai import summarize
 
 app = Flask(__name__)
 
-def get_news():
-    url = "https://news.google.com/search?q=Bintulu&hl=en-MY&gl=MY&ceid=MY:en"
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, "html.parser")
+init_db()
 
-    news = []
-    for a in soup.find_all("a"):
-        title = a.text.strip()
-        href = a.get("href")
+def update_data():
+    news_list = crawl_news()
 
-        if title and href and "/articles/" in href:
-            link = "https://news.google.com" + href[1:]
-            news.append({"title": title, "link": link})
-
-    return news[:20]
+    for n in news_list:
+        summary = summarize(n["title"])
+        insert_news(n["title"], n["link"], "", summary)
 
 @app.route("/")
 def index():
+    update_data()
     news = get_news()
     return render_template("index.html", news=news)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
