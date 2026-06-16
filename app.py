@@ -21,8 +21,11 @@ def load_data_once():
 
     print("CRAWLED:", len(news_list))
 
-    for n in news_list:
-        insert_news(n["title"], n["link"], "", "")
+from ai import summarize
+
+for n in news_list:
+    summary = summarize(n["title"])
+    insert_news(n["title"], n["link"], "", summary)
 
     DATA_READY = True
 
