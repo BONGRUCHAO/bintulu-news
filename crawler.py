@@ -4,7 +4,8 @@ import xml.etree.ElementTree as ET
 def crawl_news():
     url = "https://news.google.com/rss/search?q=Bintulu&hl=en-MY&gl=MY&ceid=MY:en"
 
-    r = requests.get(url)
+    r = requests.get(url, timeout=10)
+
     root = ET.fromstring(r.content)
 
     news = []
@@ -13,9 +14,10 @@ def crawl_news():
         title = item.find("title").text
         link = item.find("link").text
 
-        news.append({
-            "title": title,
-            "link": link
-        })
+        if title and link:
+            news.append({
+                "title": title,
+                "link": link
+            })
 
-    return news[:10]
+    return news[:15]
