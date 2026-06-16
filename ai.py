@@ -1,3 +1,20 @@
+from openai import OpenAI
+
+client = OpenAI(api_key="你的API_KEY")
+
 def summarize(title):
-    # 先用最简单版本（规则摘要）
-    return "Summary: " + title[:80]
+    try:
+        res = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "Summarize news in one short sentence."},
+                {"role": "user", "content": title}
+            ],
+            temperature=0.3
+        )
+
+        return res.choices[0].message.content
+
+    except Exception as e:
+        print("AI ERROR:", e)
+        return title  # fallback
