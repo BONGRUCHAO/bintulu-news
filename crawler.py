@@ -1,24 +1,21 @@
 import requests
-from bs4 import BeautifulSoup
+import xml.etree.ElementTree as ET
 
 def crawl_news():
-    url = "https://news.google.com/search?q=Bintulu&hl=en-MY&gl=MY&ceid=MY:en"
+    url = "https://news.google.com/rss/search?q=Bintulu&hl=en-MY&gl=MY&ceid=MY:en"
 
     r = requests.get(url)
-    print("STATUS:", r.status_code)
-    print("HTML length:", len(r.text))
+    root = ET.fromstring(r.content)
 
-    soup = BeautifulSoup(r.text, "html.parser")
+    news = []
 
-    results = []
+    for item in root.findall(".//item"):
+        title = item.find("title").text
+        link = item.find("link").text
 
-    for a in soup.find_all("a"):
-        title = a.text.strip()
-        href = a.get("href")
+        news.append({
+            "title": title,
+            "link": link
+        })
 
-        if title:
-            results.append(title)
-
-    print("FOUND TITLES:", len(results))
-
-    return []
+    return news[:10]
