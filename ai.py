@@ -1,24 +1,13 @@
-import os
-import google.generativeai as genai
+response = model.generate_content(
+    f"""
+请用简体中文总结以下新闻标题。
 
-genai.configure(
-    api_key=os.getenv("GEMINI_API_KEY")
+要求：
+1. 不超过30字
+2. 保持客观
+3. 只输出摘要内容
+
+标题：
+{title}
+"""
 )
-
-model = genai.GenerativeModel("gemini-2.5-flash")
-
-def summarize(title):
-    try:
-        response = model.generate_content(
-            f"请用一句话总结这条新闻：{title}"
-        )
-
-        summary = response.text.strip()
-
-        print("AI RESULT:", summary)
-
-        return summary
-
-    except Exception as e:
-        print("AI ERROR:", e)
-        return "AI Summary Failed"
