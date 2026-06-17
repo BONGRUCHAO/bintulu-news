@@ -1,30 +1,44 @@
 import requests
-import xml.etree.ElementTree as ET
+from bs4 import BeautifulSoup
+import feedparser
+
+
+def get_article_content(url):
+    try:
+        headers = {
+            "User-Agent": "Mozilla/5.0"
+        }
+
+        res = requests.get(url, headers=headers, timeout=10)
+        soup = BeautifulSoup(res.text, "html.parser")
+
+        # 去掉script/style
+        for tag in soup(["script", "style", "noscript"]):
+            tag.decompose()
+
+        # 尽量抓正文
+        paragraphs = soup.find_all("p")
+        content = " ".join([p.get_text() for p in paragraphs])
+
+        return content[:3000]  # 限制长度，防止token爆
+
+    except:
+        return ""
+
 
 def crawl_news():
-    url = "https://news.google.com/rss/search?q=Bintulu&hl=en-MY&gl=MY&ceid=MY:en"
+    feed = feedparser.parse("https://www.thestar.com.my/rss")
 
-    r = requests.get(url, timeout=10)
+    news_list = []
 
-    print("STATUS:", r.status_code)
-    print("CONTENT SIZE:", len(r.content))
+    for entry in feed.entries[:10]:
 
-    root = ET.fromstring(r.content)
-    items = root.findall(".//item")
+        content = get_article_content(entry.link)
 
-    print("RSS ITEMS:", len(items))
-
-    news = []
-
-    for i in items[:5]:
-        title = i.find("title").text
-        link = i.find("link").text
-
-        print("TITLE:", title)
-
-        news.append({
-            "title": title,
-            "link": link
+        news_list.append({
+            "title": entry.title,
+            "link": entry.link,
+            "content": content
         })
 
-    return news
+    return news_list
