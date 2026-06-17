@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 from crawler import crawl_news
 from db import init_db, insert_news, get_news
-from ai import summarize
+from ai import analyze
 
 app = Flask(__name__)
 init_db()
@@ -23,7 +23,7 @@ def load_data_once():
 
     for n in news_list:
 
-        summary = summarize(n["title"])
+        category, summary = analyze(n["title"])
 
         print("SUMMARY:", summary)
 
@@ -31,7 +31,8 @@ def load_data_once():
             n["title"],
             n["link"],
             "",
-            summary
+            summary,
+            category
         )
 
     DATA_READY = True
@@ -46,10 +47,7 @@ def index():
 
     print("NEWS COUNT:", len(news))
 
-    return render_template(
-        "index.html",
-        news=news
-    )
+    return render_template("index.html", news=news)
 
 
 if __name__ == "__main__":
