@@ -1,38 +1,49 @@
 import os
 import google.generativeai as genai
 
-# 读取环境变量
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 
-def summarize(title):
+def analyze(title):
     try:
         prompt = f"""
-你是新闻摘要助手。
+你是新闻分析系统。
 
-请对以下新闻标题进行总结：
+请完成两件事：
 
-要求：
-1. 使用简体中文
-2. 不超过30个字
-3. 只输出一句话，不要解释，不要加前缀
-4. 保持客观
-5. 城市，地名，用英文
+1. 分类（只能选一个）：
+经济 / 天气 / 事故 / 政治 / 交通 / 发展 / 其他
+
+2. 一句话中文摘要（不超过30字）
+
+3. 城市，地名，用英文
+
+严格输出格式：
+Category: xxx
+Summary: xxx
 
 新闻标题：
 {title}
 """
 
         response = model.generate_content(prompt)
+        text = response.text.strip()
 
-        summary = response.text.strip()
+        category = "其他"
+        summary = ""
 
-        print("AI RESULT:", summary)
+        for line in text.split("\n"):
+            if "Category:" in line:
+                category = line.replace("Category:", "").strip()
+            if "Summary:" in line:
+                summary = line.replace("Summary:", "").strip()
 
-        return summary
+        print("AI RESULT:", text)
+
+        return category, summary
 
     except Exception as e:
         print("AI ERROR:", e)
-        return "暂无摘要"
+        return "其他", "暂无摘要"
