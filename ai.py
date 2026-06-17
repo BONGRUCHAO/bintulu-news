@@ -17,6 +17,12 @@ def analyze(title):
 Category: 经济/天气/事故/政治/交通/发展/其他
 Summary: 一句话中文摘要，不超过30字
 
+必须严格输出两行：
+Category: xxx
+Summary: xxx
+不要合并在一行
+不要加任何解释
+
 不要添加任何多余内容。
 
 新闻标题：
