@@ -1,11 +1,11 @@
 from flask import Flask, render_template
 from crawler import crawl_news
 from db import init_db, insert_news, get_news
+from ai import summarize
 
 app = Flask(__name__)
 init_db()
 
-# 是否已经初始化过数据（避免每次访问都爬）
 DATA_READY = False
 
 
@@ -21,11 +21,18 @@ def load_data_once():
 
     print("CRAWLED:", len(news_list))
 
-from ai import summarize
+    for n in news_list:
 
-for n in news_list:
-    summary = summarize(n["title"])
-    insert_news(n["title"], n["link"], "", summary)
+        summary = summarize(n["title"])
+
+        print("SUMMARY:", summary)
+
+        insert_news(
+            n["title"],
+            n["link"],
+            "",
+            summary
+        )
 
     DATA_READY = True
 
@@ -39,7 +46,10 @@ def index():
 
     print("NEWS COUNT:", len(news))
 
-    return render_template("index.html", news=news)
+    return render_template(
+        "index.html",
+        news=news
+    )
 
 
 if __name__ == "__main__":
