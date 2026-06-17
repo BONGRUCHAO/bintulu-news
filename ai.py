@@ -1,27 +1,19 @@
 import os
-from openai import OpenAI
+import google.generativeai as genai
 
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
+genai.configure(
+    api_key=os.getenv("GEMINI_API_KEY")
 )
+
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 def summarize(title):
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "Summarize this news headline in one sentence."
-                },
-                {
-                    "role": "user",
-                    "content": title
-                }
-            ]
+        response = model.generate_content(
+            f"请用一句话总结这条新闻：{title}"
         )
 
-        summary = response.choices[0].message.content
+        summary = response.text.strip()
 
         print("AI RESULT:", summary)
 
@@ -29,5 +21,4 @@ def summarize(title):
 
     except Exception as e:
         print("AI ERROR:", e)
-
         return "AI Summary Failed"
