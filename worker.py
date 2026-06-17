@@ -1,19 +1,17 @@
-from crawler import crawl_news
-from db import init_db, insert_news
-from ai import summarize
-import time
+from flask import Flask, render_template
+from db import init_db, get_news
 
+app = Flask(__name__)
 init_db()
 
-def run_job():
-    news_list = crawl_news()
 
-    for n in news_list:
-        summary = summarize(n["title"])
-        insert_news(n["title"], n["link"], "", summary)
+@app.route("/")
+def index():
+    news = get_news()
+    print("NEWS COUNT:", len(news))
+
+    return render_template("index.html", news=news)
+
 
 if __name__ == "__main__":
-    while True:
-        print("Updating news...")
-        run_job()
-        time.sleep(1800)  # 30分钟
+    app.run(host="0.0.0.0", port=5000)
