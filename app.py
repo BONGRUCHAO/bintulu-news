@@ -4,12 +4,9 @@ from db import init_db, get_news
 app = Flask(__name__)
 init_db()
 
-
 @app.route("/")
 def index():
     news = get_news()
-    print("NEWS COUNT:", len(news))
-
     return render_template("index.html", news=news)
 
 
