@@ -2,9 +2,11 @@ import sqlite3
 
 DB_NAME = "news.db"
 
+
 def init_db():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
+
     c.execute("""
     CREATE TABLE IF NOT EXISTS news (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -12,26 +14,38 @@ def init_db():
         link TEXT,
         content TEXT,
         summary TEXT,
+        category TEXT,
         time TEXT
     )
     """)
+
     conn.commit()
     conn.close()
+
 
 def insert_news(title, link, content, summary, category):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
+
     c.execute("""
-    INSERT INTO news (title, link, content, summary, time)
-    VALUES (?, ?, ?, ?, datetime('now'))
-    """, (title, link, content, summary))
+    INSERT INTO news (title, link, content, summary, category, time)
+    VALUES (?, ?, ?, ?, ?, datetime('now'))
+    """, (title, link, content, summary, category))
+
     conn.commit()
     conn.close()
+
 
 def get_news():
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
-    c.execute("SELECT title, link, summary, time FROM news ORDER BY id DESC")
+
+    c.execute("""
+    SELECT title, link, summary, category, time
+    FROM news
+    ORDER BY id DESC
+    """)
+
     rows = c.fetchall()
     conn.close()
     return rows
