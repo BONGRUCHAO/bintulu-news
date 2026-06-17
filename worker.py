@@ -10,7 +10,11 @@ def run_job():
 
     news_list = crawl_news()
 
+    print("TOTAL RSS:", len(news_list))
+
     for n in news_list:
+
+        # 直接插入（靠DB去重）
         category, summary = analyze(n["title"])
 
         insert_news(
@@ -21,10 +25,9 @@ def run_job():
             category
         )
 
-        print("DONE:", n["title"])
+        print("PROCESSED:", n["title"])
 
 
-# 无限循环后台运行
 while True:
     run_job()
 
