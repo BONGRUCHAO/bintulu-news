@@ -18,7 +18,7 @@ def init_db():
     conn.commit()
     conn.close()
 
-def insert_news(title, link, content, summary):
+def insert_news(title, link, content, summary, category):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
     c.execute("""
