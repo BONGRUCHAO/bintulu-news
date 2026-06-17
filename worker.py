@@ -6,14 +6,11 @@ from ai import analyze
 init_db()
 
 def run_job():
-    print("=== START JOB ===")
+    print("START JOB")
 
     news_list = crawl_news()
 
-    print("CRAWLED:", len(news_list))
-
     for n in news_list:
-
         category, summary = analyze(n["title"])
 
         insert_news(
@@ -24,14 +21,12 @@ def run_job():
             category
         )
 
-        print("SAVED:", n["title"])
-
-    print("=== JOB DONE ===")
+        print("DONE:", n["title"])
 
 
+# 无限循环后台运行
 while True:
     run_job()
 
-    print("SLEEP 30 MIN...")
+    print("SLEEP 30 MIN")
     time.sleep(1800)
-    
