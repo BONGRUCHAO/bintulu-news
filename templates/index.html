@@ -2,16 +2,23 @@
 <html>
 <body>
 
-<h1>NEWS TEST</h1>
-
-<p>Total News: {{ news|length }}</p>
+<h1>Bintulu News + AI</h1>
 
 {% for item in news %}
+
+<div style="margin-bottom:20px;">
+    <h3>[{{ item[3] }}]</h3>
+
+    <a href="{{ item[1] }}" target="_blank">
+        {{ item[0] }}
+    </a>
+
+    <p>{{ item[2] }}</p>
+    <small>{{ item[4] }}</small>
+</div>
+
 <hr>
-<p><b>Title:</b> {{ item[0] }}</p>
-<p><b>Link:</b> {{ item[1] }}</p>
-<p><b>Summary:</b> {{ item[2] }}</p>
-<p><b>Time:</b> {{ item[3] }}</p>
+
 {% endfor %}
 
 </body>
