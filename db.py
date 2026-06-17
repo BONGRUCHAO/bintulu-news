@@ -27,25 +27,16 @@ def insert_news(title, link, content, summary, category):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
 
-    c.execute("""
-    INSERT INTO news (title, link, content, summary, category, time)
-    VALUES (?, ?, ?, ?, ?, datetime('now'))
-    """, (title, link, content, summary, category))
+    try:
+        c.execute("""
+        INSERT INTO news (title, link, content, summary, category, time)
+        VALUES (?, ?, ?, ?, ?, datetime('now'))
+        """, (title, link, content, summary, category))
 
-    conn.commit()
+        conn.commit()
+
+    except sqlite3.IntegrityError:
+        # 已存在（重复新闻）
+        print("SKIP DUPLICATE:", title)
+
     conn.close()
-
-
-def get_news():
-    conn = sqlite3.connect(DB_NAME)
-    c = conn.cursor()
-
-    c.execute("""
-    SELECT title, link, summary, category, time
-    FROM news
-    ORDER BY id DESC
-    """)
-
-    rows = c.fetchall()
-    conn.close()
-    return rows
