@@ -11,7 +11,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS news (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT,
-        link TEXT,
+        link TEXT UNIQUE,
         content TEXT,
         summary TEXT,
         category TEXT,
@@ -36,7 +36,22 @@ def insert_news(title, link, content, summary, category):
         conn.commit()
 
     except sqlite3.IntegrityError:
-        # 已存在（重复新闻）
+        # 去重关键
         print("SKIP DUPLICATE:", title)
 
     conn.close()
+
+
+def get_news():
+    conn = sqlite3.connect(DB_NAME)
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT title, link, summary, category, time
+    FROM news
+    ORDER BY id DESC
+    """)
+
+    rows = c.fetchall()
+    conn.close()
+    return rows
