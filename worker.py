@@ -25,13 +25,14 @@ def run_job():
         category = "其他"
         summary = n["title"][:30]
 
-    insert_news(
-        n["title"],
-        n["link"],
-        n["content"],
-        summary,
-        category
-    )
+   insert_news(
+    n["title"],
+    n["link"],
+    n["content"],
+    summary,
+    category,
+    n.get("published", "")
+)
 
         print("DONE:", n["title"])
 
