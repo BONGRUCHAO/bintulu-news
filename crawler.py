@@ -31,12 +31,22 @@ def get_content(url):
 
 def crawl_news():
     try:
-        feed = feedparser.parse(
-            "https://news.google.com/rss/search?q=Bintulu&hl=en-MY&gl=MY&ceid=MY:en"
-        )
+        url = "https://news.google.com/rss/search?q=Bintulu&hl=en-MY&gl=MY&ceid=MY:en"
 
-        if not feed or not feed.entries:
-            print("RSS EMPTY")
+        feed = feedparser.parse(url)
+
+        # 🔥关键检查1
+        if not feed:
+            print("FEED NONE")
+            return []
+
+        # 🔥关键检查2
+        if hasattr(feed, "status"):
+            print("RSS STATUS:", feed.status)
+
+        # 🔥关键检查3
+        if not feed.entries:
+            print("RSS EMPTY (blocked or failed parsing)")
             return []
 
         print("RSS ITEMS:", len(feed.entries))
