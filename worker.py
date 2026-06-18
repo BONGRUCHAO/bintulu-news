@@ -9,41 +9,60 @@ MAX_PER_RUN = 5
 SLEEP_BETWEEN = 3
 
 
+def safe_analyze(title, content):
+    try:
+        return analyze(title, content)
+    except Exception as e:
+        print("AI FAIL:", e)
+        return "其他", title[:30]
+
+
 def run_job():
     print("START JOB")
 
-    news_list = crawl_news()
+    try:
+        news_list = crawl_news()
+    except Exception as e:
+        print("CRAWL FAIL:", e)
+        return
+
+    if not news_list:
+        print("NO NEWS FOUND")
+        return
 
     count = 0
 
     for n in news_list:
 
-    try:
-        category, summary = analyze(n["title"], n["content"])
-    except Exception as e:
-        print("ANALYZE CRASH:", e)
-        category = "其他"
-        summary = n["title"][:30]
+        if count >= MAX_PER_RUN:
+            break
 
-   insert_news(
-    n["title"],
-    n["link"],
-    n["content"],
-    summary,
-    category,
-    n.get("published", "")
-)
+        try:
+            category, summary = safe_analyze(n["title"], n["content"])
 
-        print("DONE:", n["title"])
+            insert_news(
+                n["title"],
+                n["link"],
+                n["content"],
+                summary,
+                category
+            )
+
+            print("DONE:", n["title"])
+
+        except Exception as e:
+            print("INSERT FAIL:", e)
 
         count += 1
         time.sleep(SLEEP_BETWEEN)
 
 
+# ===== 永久运行 + 防崩 =====
 while True:
     try:
         run_job()
     except Exception as e:
-        print("WORKER ERROR:", e)
+        print("WORKER CRASH PROTECTED:", e)
 
+    print("SLEEP 30 MIN")
     time.sleep(1800)
