@@ -51,13 +51,16 @@ def update_news_if_needed():
 
 @app.route("/")
 def index():
-    # 自动更新（关键）
+    t1 = time.time()
+
     update_news_if_needed()
+
+    t2 = time.time()
+    print("UPDATE TIME:", t2 - t1)
 
     news = get_news() or []
 
     return render_template("index.html", news=news)
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
