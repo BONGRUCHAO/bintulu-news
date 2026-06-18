@@ -38,6 +38,10 @@ def run_job():
 
 
 while True:
-    run_job()
+    try:
+        run_job()
+    except Exception as e:
+        print("WORKER ERROR:", e)
+
     print("SLEEP 30 MIN")
     time.sleep(1800)
