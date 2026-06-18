@@ -18,24 +18,21 @@ def safe_analyze(title, content):
 
 
 def run_job():
-    print("START JOB")
+    print("\n===== START JOB =====")
 
-    try:
-        news_list = crawl_news()
-    except Exception as e:
-        print("CRAWL FAIL:", e)
-        return
+    news_list = crawl_news()
 
     print("NEWS FOUND:", len(news_list))
 
     if not news_list:
+        print("EMPTY CYCLE")
         return
 
     count = 0
 
     for n in news_list:
-
         if count >= MAX_PER_RUN:
+            print("MAX LIMIT HIT")
             break
 
         try:
@@ -49,7 +46,7 @@ def run_job():
                 category
             )
 
-            print("DONE:", n["title"])
+            print("DONE:", n["title"][:40])
 
         except Exception as e:
             print("INSERT FAIL:", e)
@@ -57,6 +54,7 @@ def run_job():
         count += 1
         time.sleep(SLEEP_BETWEEN)
 
+    print("===== JOB END =====\n")
 
 while True:
     try:
