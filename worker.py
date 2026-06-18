@@ -5,9 +5,8 @@ from ai import analyze
 
 init_db()
 
-# ====== 限流配置 ======
-MAX_AI_PER_RUN = 3      # 每次最多处理3条
-SLEEP_BETWEEN_AI = 5    # 每条间隔5秒
+MAX_PER_RUN = 5
+SLEEP_BETWEEN = 3
 
 
 def run_job():
@@ -19,29 +18,26 @@ def run_job():
 
     for n in news_list:
 
-        if count >= MAX_AI_PER_RUN:
-            print("LIMIT REACHED, STOP THIS ROUND")
+        if count >= MAX_PER_RUN:
             break
 
-        category, summary = analyze(n["title"])
+        category, summary = analyze(n["title"], n["content"])
 
         insert_news(
             n["title"],
             n["link"],
-            "",
+            n["content"],
             summary,
             category
         )
 
+        print("DONE:", n["title"])
+
         count += 1
-
-        print("AI DONE:", n["title"])
-
-        time.sleep(SLEEP_BETWEEN_AI)
+        time.sleep(SLEEP_BETWEEN)
 
 
 while True:
     run_job()
-
     print("SLEEP 30 MIN")
     time.sleep(1800)
