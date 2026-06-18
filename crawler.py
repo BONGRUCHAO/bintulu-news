@@ -25,9 +25,14 @@ def get_content(url):
 def crawl_news():
     feed = feedparser.parse("https://www.thestar.com.my/rss")
 
+    print("RSS ITEMS:", len(feed.entries))
+
     news = []
 
     for e in feed.entries[:10]:
+
+        print("TITLE:", e.title)
+
         news.append({
             "title": e.title,
             "link": e.link,
