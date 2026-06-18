@@ -15,7 +15,6 @@ def init_db():
         content TEXT,
         summary TEXT,
         category TEXT,
-        published_time TEXT,
         time TEXT
     )
     """)
@@ -24,22 +23,21 @@ def init_db():
     conn.close()
 
 
-def insert_news(title, link, content, summary, category, published_time):
+def insert_news(title, link, content, summary, category):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
 
     try:
         c.execute("""
-        INSERT INTO news (
-            title, link, content, summary, category, published_time, time
-        )
-        VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
-        """, (title, link, content, summary, category, published_time))
+        INSERT OR IGNORE INTO news
+        (title, link, content, summary, category, time)
+        VALUES (?, ?, ?, ?, ?, datetime('now'))
+        """, (title, link, content, summary, category))
 
         conn.commit()
 
-    except sqlite3.IntegrityError:
-        print("DUPLICATE:", title)
+    except Exception as e:
+        print("DB ERROR:", e)
 
     conn.close()
 
@@ -49,9 +47,10 @@ def get_news():
     c = conn.cursor()
 
     c.execute("""
-    SELECT title, link, summary, category, published_time, time
+    SELECT title, link, summary, category, time
     FROM news
     ORDER BY id DESC
+    LIMIT 100
     """)
 
     rows = c.fetchall()
