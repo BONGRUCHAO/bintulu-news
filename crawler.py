@@ -1,26 +1,22 @@
+import feedparser
 import requests
 from bs4 import BeautifulSoup
-import feedparser
 
 
-def get_article_content(url):
+def get_content(url):
     try:
-        headers = {
-            "User-Agent": "Mozilla/5.0"
-        }
+        headers = {"User-Agent": "Mozilla/5.0"}
+        r = requests.get(url, headers=headers, timeout=10)
 
-        res = requests.get(url, headers=headers, timeout=10)
-        soup = BeautifulSoup(res.text, "html.parser")
+        soup = BeautifulSoup(r.text, "html.parser")
 
-        # 去掉script/style
-        for tag in soup(["script", "style", "noscript"]):
-            tag.decompose()
+        for t in soup(["script", "style", "noscript"]):
+            t.decompose()
 
-        # 尽量抓正文
-        paragraphs = soup.find_all("p")
-        content = " ".join([p.get_text() for p in paragraphs])
+        ps = soup.find_all("p")
+        text = " ".join(p.get_text() for p in ps)
 
-        return content[:3000]  # 限制长度，防止token爆
+        return text[:2500]
 
     except:
         return ""
@@ -29,16 +25,13 @@ def get_article_content(url):
 def crawl_news():
     feed = feedparser.parse("https://www.thestar.com.my/rss")
 
-    news_list = []
+    news = []
 
-    for entry in feed.entries[:10]:
-
-        content = get_article_content(entry.link)
-
-        news_list.append({
-            "title": entry.title,
-            "link": entry.link,
-            "content": content
+    for e in feed.entries[:10]:
+        news.append({
+            "title": e.title,
+            "link": e.link,
+            "content": get_content(e.link)
         })
 
-    return news_list
+    return news
