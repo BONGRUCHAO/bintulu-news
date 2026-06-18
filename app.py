@@ -4,6 +4,7 @@ from db import init_db, get_news
 app = Flask(__name__)
 init_db()
 
+
 @app.route("/")
 def index():
     news = get_news()
