@@ -6,7 +6,11 @@ from bs4 import BeautifulSoup
 def get_content(url):
     try:
         headers = {"User-Agent": "Mozilla/5.0"}
-        r = requests.get(url, headers=headers, timeout=10)
+
+        r = requests.get(url, headers=headers, timeout=6)
+
+        if r.status_code != 200:
+            return ""
 
         soup = BeautifulSoup(r.text, "html.parser")
 
@@ -16,9 +20,12 @@ def get_content(url):
         ps = soup.find_all("p")
         text = " ".join(p.get_text() for p in ps)
 
-        return text[:2000]
+        text = text.strip()
 
-    except:
+        return text[:1500] if text else ""
+
+    except Exception as e:
+        print("CONTENT FAIL:", e)
         return ""
 
 
