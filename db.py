@@ -24,21 +24,22 @@ def init_db():
     conn.close()
 
 
-def insert_news(title, link, content, summary, category):
+def insert_news(title, link, content, summary, category, published_time):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
 
     try:
         c.execute("""
-        INSERT INTO news (title, link, content, summary, category, time)
-        VALUES (?, ?, ?, ?, ?, datetime('now'))
-        """, (title, link, content, summary, category))
+        INSERT INTO news (
+            title, link, content, summary, category, published_time, time
+        )
+        VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
+        """, (title, link, content, summary, category, published_time))
 
         conn.commit()
 
     except sqlite3.IntegrityError:
-        # 去重关键
-        print("SKIP DUPLICATE:", title)
+        print("DUPLICATE:", title)
 
     conn.close()
 
