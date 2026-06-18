@@ -49,7 +49,7 @@ def get_news():
     c = conn.cursor()
 
     c.execute("""
-    SELECT title, link, summary, category, time
+    SELECT title, link, summary, category, published_time, time
     FROM news
     ORDER BY id DESC
     """)
