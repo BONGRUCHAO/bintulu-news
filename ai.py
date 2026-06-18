@@ -1,86 +1,105 @@
 import os
-import re
+import json
 import google.generativeai as genai
 from openai import OpenAI
 
-# ===== Gemini =====
+# ===== AI KEY =====
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 gemini_model = genai.GenerativeModel("gemini-2.5-flash")
 
-# ===== OpenAI =====
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def gemini_ai(title, content):
-    prompt = f"""
-你是新闻分析系统。
+# ===== Prompt（强制JSON）=====
+def build_prompt(title, content):
+    return f"""
+你是新闻分析系统，只能输出JSON，不能有任何多余文字。
 
-基于全文输出：
+JSON格式必须严格如下：
+{{
+  "category": "经济/天气/事故/政治/交通/发展/其他",
+  "summary": "一句话中文，不超过30字"
+}}
 
-Category: 经济/天气/事故/政治/交通/发展/其他
-Summary: 一句话中文（30字以内）
+规则：
+- 必须基于内容
+- 不允许猜测
+- 不允许解释
 
-标题：
+新闻标题：
 {title}
 
-内容：
+新闻内容：
 {content}
 """
 
-    res = gemini_model.generate_content(prompt)
+
+# ===== Gemini =====
+def gemini_ai(title, content):
+    res = gemini_model.generate_content(build_prompt(title, content))
     return res.text.strip()
 
 
+# ===== OpenAI =====
 def openai_ai(title, content):
     res = openai_client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {
                 "role": "system",
-                "content": "你是新闻分析系统，输出：Category + Summary，两行中文"
+                "content": "只输出JSON，不要任何解释"
             },
             {
                 "role": "user",
-                "content": f"{title}\n\n{content}"
+                "content": build_prompt(title, content)
             }
         ]
     )
-
     return res.choices[0].message.content.strip()
 
 
-def parse(text):
-    category = "其他"
-    summary = "暂无摘要"
+# ===== JSON解析（防崩核心）=====
+def parse_json(text):
+    try:
+        # 去掉 ```json
+        text = text.replace("```json", "").replace("```", "").strip()
 
-    cat = re.search(r"(经济|天气|事故|政治|交通|发展|其他)", text)
-    if cat:
-        category = cat.group(1)
+        data = json.loads(text)
 
-    lines = text.split("\n")
-    for line in lines:
-        if len(line.strip()) > 5:
-            summary = line.strip()
+        category = data.get("category", "其他")
+        summary = data.get("summary", "暂无摘要")
 
-    return category, summary
+        return category, summary
+
+    except Exception as e:
+        print("JSON PARSE FAIL:", e)
+        return "其他", "暂无摘要"
 
 
-# ===== 最终入口（多AI自动切换） =====
-def analyze(title, content=""):
+# ===== Fallback =====
+def fallback(title):
+    return "其他", title[:30]
+
+
+# ===== 主入口（多AI防崩）=====
+def analyze(title, content):
+    # 1. Gemini
     try:
         print("TRY GEMINI")
         text = gemini_ai(title, content)
-        return parse(text)
+        return parse_json(text)
 
     except Exception as e:
         print("GEMINI FAIL:", e)
 
-        try:
-            print("TRY OPENAI")
-            text = openai_ai(title, content)
-            return parse(text)
+    # 2. OpenAI
+    try:
+        print("TRY OPENAI")
+        text = openai_ai(title, content)
+        return parse_json(text)
 
-        except Exception as e2:
-            print("OPENAI FAIL:", e2)
+    except Exception as e:
+        print("OPENAI FAIL:", e)
 
-            return "其他", f"新闻：{title}"
+    # 3. fallback
+    return fallback(title)
