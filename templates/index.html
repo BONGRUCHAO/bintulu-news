@@ -1,27 +1,83 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bintulu News</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .news {
+            background: white;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a73e8;
+            text-decoration: none;
+        }
+
+        .meta {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .summary {
+            margin-top: 8px;
+            color: #333;
+        }
+
+        .category {
+            display: inline-block;
+            background: #e8f0fe;
+            color: #1a73e8;
+            padding: 2px 6px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        hr {
+            border: none;
+        }
+    </style>
+</head>
+
 <body>
 
-<h1>AI News System</h1>
+<h2>Bintulu News</h2>
 
 {% for item in news %}
 
-<div style="margin-bottom:20px;">
-    <h3>[{{ item[3] }}]</h3>
+<div class="news">
 
-    <a href="{{ item[1] }}" target="_blank">
+    <div class="category">{{ item[3] }}</div>
+
+    <br>
+
+    <a class="title" href="{{ item[1] }}" target="_blank">
         {{ item[0] }}
     </a>
 
-    <p>{{ item[2] }}</p>
+    <div class="summary">
+        {{ item[2] }}
+    </div>
 
-    <small>
-        Published: {{ item[4] }} <br>
-        Saved: {{ item[5] }}
-    </small>
+    <div class="meta">
+        {{ item[4] }}
+    </div>
+
 </div>
-
-<hr>
 
 {% endfor %}
 
