@@ -61,8 +61,10 @@ def run_job():
 while True:
     try:
         run_job()
+
     except Exception as e:
         print("WORKER CRASH PROTECTED:", e)
+        time.sleep(10)
 
     print("SLEEP 30 MIN")
     time.sleep(1800)
