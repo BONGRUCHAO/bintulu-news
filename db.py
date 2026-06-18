@@ -34,13 +34,18 @@ def insert_news(title, link, content, summary, category):
         VALUES (?, ?, ?, ?, ?, datetime('now'))
         """, (title, link, content, summary, category))
 
+        if c.rowcount == 0:
+            print("SKIP DUPLICATE:", title[:30])
+        else:
+            print("INSERT OK:", title[:30])
+
         conn.commit()
 
     except Exception as e:
         print("DB ERROR:", e)
 
-    conn.close()
-
+    finally:
+        conn.close()
 
 def get_news():
     conn = sqlite3.connect(DB_NAME)
