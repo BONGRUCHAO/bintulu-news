@@ -7,7 +7,7 @@ init_db()
 
 @app.route("/")
 def index():
-    news = get_news()
+    news = get_news() or []
     return render_template("index.html", news=news)
 
 
