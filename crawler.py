@@ -16,7 +16,7 @@ def get_content(url):
         ps = soup.find_all("p")
         text = " ".join(p.get_text() for p in ps)
 
-        return text[:2500]
+        return text[:2000]
 
     except:
         return ""
@@ -24,7 +24,7 @@ def get_content(url):
 
 def crawl_news():
     feed = feedparser.parse(
-        "https://www.theborneopost.com/feed/"
+        "https://news.google.com/rss/search?q=Bintulu&hl=en-MY&gl=MY&ceid=MY:en"
     )
 
     print("RSS ITEMS:", len(feed.entries))
@@ -33,14 +33,10 @@ def crawl_news():
 
     for e in feed.entries[:10]:
 
-        # ⭐ 获取发布时间（关键）
-        published = getattr(e, "published", None)
-
         news.append({
             "title": e.title,
             "link": e.link,
-            "content": get_content(e.link),
-            "published": published  # ⭐ 新增
+            "content": get_content(e.link) or e.title
         })
 
     return news
