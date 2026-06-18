@@ -1,5 +1,7 @@
-flask
+Flask
 gunicorn
-google-generativeai
+feedparser
 requests
 beautifulsoup4
+google-generativeai
+openai
