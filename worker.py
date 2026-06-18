@@ -18,18 +18,20 @@ def run_job():
 
     for n in news_list:
 
-        if count >= MAX_PER_RUN:
-            break
-
+    try:
         category, summary = analyze(n["title"], n["content"])
+    except Exception as e:
+        print("ANALYZE CRASH:", e)
+        category = "其他"
+        summary = n["title"][:30]
 
-        insert_news(
-            n["title"],
-            n["link"],
-            n["content"],
-            summary,
-            category
-        )
+    insert_news(
+        n["title"],
+        n["link"],
+        n["content"],
+        summary,
+        category
+    )
 
         print("DONE:", n["title"])
 
