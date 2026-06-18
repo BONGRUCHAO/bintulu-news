@@ -23,20 +23,31 @@ def get_content(url):
 
 
 def crawl_news():
-    feed = feedparser.parse(
-        "https://news.google.com/rss/search?q=Bintulu&hl=en-MY&gl=MY&ceid=MY:en"
-    )
+    try:
+        feed = feedparser.parse(
+            "https://news.google.com/rss/search?q=Bintulu&hl=en-MY&gl=MY&ceid=MY:en"
+        )
 
-    print("RSS ITEMS:", len(feed.entries))
+        if not feed or not feed.entries:
+            print("RSS EMPTY")
+            return []
 
-    news = []
+        print("RSS ITEMS:", len(feed.entries))
 
-    for e in feed.entries[:10]:
+        news = []
 
-        news.append({
-            "title": e.title,
-            "link": e.link,
-            "content": get_content(e.link) or e.title
-        })
+        for e in feed.entries[:10]:
+            if not hasattr(e, "title") or not hasattr(e, "link"):
+                continue
 
-    return news
+            news.append({
+                "title": e.title,
+                "link": e.link,
+                "content": get_content(e.link) or e.title
+            })
+
+        return news
+
+    except Exception as e:
+        print("CRAWL FAIL:", e)
+        return []
