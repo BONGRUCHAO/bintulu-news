@@ -103,3 +103,19 @@ def analyze(title, content):
 
     # 3. fallback
     return fallback(title)
+
+def safe_analyze(title, content):
+    try:
+        if not content:
+            content = title
+
+        category, summary = analyze(title, content)
+
+        if not summary:
+            summary = title[:30]
+
+        return category, summary
+
+    except Exception as e:
+        print("AI FAIL:", e)
+        return "其他", title[:30]
