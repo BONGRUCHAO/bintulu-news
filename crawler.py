@@ -32,12 +32,15 @@ def crawl_news():
     news = []
 
     for e in feed.entries[:10]:
-        print("TITLE:", e.title)
+
+        # ⭐ 获取发布时间（关键）
+        published = getattr(e, "published", None)
 
         news.append({
             "title": e.title,
             "link": e.link,
-            "content": get_content(e.link)
+            "content": get_content(e.link),
+            "published": published  # ⭐ 新增
         })
 
     return news
