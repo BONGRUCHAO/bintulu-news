@@ -66,7 +66,7 @@ def parse(text):
 
 
 # ===== 最终入口（多AI自动切换） =====
-def analyze(title, content):
+def analyze(title, content=""):
     try:
         print("TRY GEMINI")
         text = gemini_ai(title, content)
