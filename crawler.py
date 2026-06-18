@@ -24,7 +24,7 @@ def get_content(url):
 
 def crawl_news():
     feed = feedparser.parse(
-        "https://news.google.com/rss/search?q=Bintulu&hl=en-MY&gl=MY&ceid=MY:en"
+        "https://www.theborneopost.com/feed/"
     )
 
     print("RSS ITEMS:", len(feed.entries))
