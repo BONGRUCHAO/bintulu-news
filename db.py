@@ -15,6 +15,7 @@ def init_db():
         content TEXT,
         summary TEXT,
         category TEXT,
+        published_time TEXT,
         time TEXT
     )
     """)
