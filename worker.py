@@ -6,7 +6,7 @@ from ai import analyze
 init_db()
 
 MAX_PER_RUN = 5
-SLEEP_BETWEEN = 3
+SLEEP_BETWEEN = 2
 
 
 def safe_analyze(title, content):
@@ -26,8 +26,9 @@ def run_job():
         print("CRAWL FAIL:", e)
         return
 
+    print("NEWS FOUND:", len(news_list))
+
     if not news_list:
-        print("NO NEWS FOUND")
         return
 
     count = 0
@@ -57,7 +58,6 @@ def run_job():
         time.sleep(SLEEP_BETWEEN)
 
 
-# ===== 永久运行 + 防崩 =====
 while True:
     try:
         run_job()
