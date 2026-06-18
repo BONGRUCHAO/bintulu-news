@@ -43,5 +43,4 @@ while True:
     except Exception as e:
         print("WORKER ERROR:", e)
 
-    print("SLEEP 30 MIN")
     time.sleep(1800)
